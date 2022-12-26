@@ -1,34 +1,40 @@
 @echo off
 cls
 
-echo =============================================================
-echo System Repair, App Update, and Task Scheduler Cleanup Script
-echo =============================================================
-echo.
-echo This script will perform the following actions:
-echo - Repair and restore the Windows operating system
-echo - Install any available updates for the apps on your system
-echo - Clean up the task scheduler by removing unused tasks
-echo.
-echo Press any key to continue, or Ctrl+C to cancel...
-pause > nul
-
-echo Starting system repairs, app updates, and task scheduler cleanup...
+echo ==============================
+echo System Repair and App Update, 
+echo ==============================
 echo.
 
-sfc /scannow
-
+echo Before running this script, please make sure that you have saved any open documents and closed any programs that you are currently using.
+echo.
+echo The script will first check your file system for errors and repair any issues it finds. This process may take some time, depending on the size and condition of your system.
+echo.
+echo Next, the script will check for and install any available updates for the apps on your system. This may also take some time, depending on the number and size of the updates available.
+echo.
+echo.
+echo Finally, the script will remove any temporary and junk files from your system. This will free up space on your hard drive and improve the overall performance of your system.
+echo.
+echo Are you ready to run this script?
+echo.
+echo [Y] Yes
+echo [N] No
+echo.
+choice /C YN /M "Please select an option:"
+if errorlevel 2 goto end
+echo Starting system repairs and app updates
+echo.
+sfc /scannow 
 dism /online /cleanup-image /restorehealth
+sfc /scannow 
+chkdsk 
+cleanmgr
 
-sfc /scannow
+del /f /s /q %temp%\*
+rd /s /q %temp%
 
-chkdsk /f
 
+echo updating all apps
 winget upgrade
-
-schtasks /Query /FO LIST /V | find /I "Ready"
-
-echo.
-echo All system repairs, app updates, and task scheduler cleanup are complete
-echo Press any key to exit...
-pause > nul
+echo you should upgrade the apps above 
+pause 
